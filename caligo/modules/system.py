@@ -55,32 +55,32 @@ class SystemModule(module.Module):
         return f"```{sysinfo}```{err}"
 
     @command.desc("Test Internet speed")
-    @command.alias("stest", "st")
+    @command.alias("stest", "st", "speed")
     async def cmd_speedtest(self, ctx: command.Context) -> str:
         before = util.time.usec()
 
         st = await util.run_sync(speedtest.Speedtest)
-        status = "Selecting server..."
+#        status = "**Selecting server...**"
 
         await ctx.respond(status)
         server = await util.run_sync(st.get_best_server)
-        status += f" {server['sponsor']} ({server['name']})\n"
-        status += f"Ping: {server['latency']:.2f} ms\n"
+        status += f"🌏**Server:**`{server['sponsor']} ({server['name']})`\n"
+        status += f"📍 **Ping:** `{server['latency']:.2f} ms`\n"
 
-        status += "Performing download test..."
+#        status += "Performing download test..."
         await ctx.respond(status)
         dl_bits = await util.run_sync(st.download)
-        dl_mbit = dl_bits / 1000 / 1000
-        status += f" {dl_mbit:.2f} Mbps\n"
+        dl_mbit = dl_bits / 100 / 1000
+        status += f"📥 **Download:** `{dl_mbit:.2f} Kbps`\n"
 
-        status += "Performing upload test..."
+#        status += "Performing upload test..."
         await ctx.respond(status)
         ul_bits = await util.run_sync(st.upload)
-        ul_mbit = ul_bits / 1000 / 1000
-        status += f" {ul_mbit:.2f} Mbps\n"
+        ul_mbit = ul_bits / 100 / 1000
+        status += f"📤 **Upload:** `{ul_mbit:.2f} Kbps`\n"
 
         delta = util.time.usec() - before
-        status += f"\nTime elapsed: {util.time.format_duration_us(delta)}"
+        status += f"\n⏰ __Time elapsed: {util.time.format_duration_us(delta)}__"
 
         return status
 
